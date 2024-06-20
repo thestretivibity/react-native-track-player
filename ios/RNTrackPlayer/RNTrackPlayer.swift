@@ -802,6 +802,7 @@ public class RNTrackPlayer: RCTEventEmitter, AudioSessionControllerDelegate {
     }
 
     // MARK: - QueuedAudioPlayer Event Handlers
+private var hasPreloadedNextTracks = false
 
     func handleAudioPlayerStateChange(state: AVPlayerWrapperState) {
         emit(event: EventType.PlaybackState, body: getPlaybackStateBodyKeyValues(state: state))
@@ -810,8 +811,11 @@ public class RNTrackPlayer: RCTEventEmitter, AudioSessionControllerDelegate {
                 "track": player.currentIndex,
                 "position": player.currentTime,
             ] as [String : Any])
-        }
+     } else if (state == .ready && !hasPreloadedNextTracks) {
+        player.preloadNext(numberOfTracks: 3)
+        hasPreloadedNextTracks = true
     }
+}
     
     func handleAudioPlayerCommonMetadataReceived(metadata: [AVMetadataItem]) {
         let commonMetadata = MetadataAdapter.convertToCommonMetadata(metadata: metadata, skipRaw: true)
@@ -845,6 +849,8 @@ public class RNTrackPlayer: RCTEventEmitter, AudioSessionControllerDelegate {
         lastIndex: Int?,
         lastPosition: Double?
     ) {
+
+         hasPreloadedNextTracks = false
 
         if let item = item {
             DispatchQueue.main.async {
