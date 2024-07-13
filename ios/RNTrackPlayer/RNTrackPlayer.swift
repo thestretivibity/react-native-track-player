@@ -812,7 +812,7 @@ private var hasPreloadedNextTracks = false
                 "position": player.currentTime,
             ] as [String : Any])
      } else if (state == .ready && !hasPreloadedNextTracks) {
-        player.preloadNext(numberOfTracks: 3)
+        player.preloadNext(numberOfTracks: 25)
         hasPreloadedNextTracks = true
     }
 }
